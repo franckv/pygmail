@@ -1,13 +1,17 @@
-import MySQLdb
-
 from message import Message
 
 class SQLConnector():
     def __init_(self):
 	self.con = None
 
-    def connect(self, host, db, user, passwd):
-	self.con = MySQLdb.connect(host=host, db=db, user=user, passwd=passwd, use_unicode=True)
+    def connect(self, engine, host, db, user, passwd):
+	self.engine = engine
+	if engine == 'sqlite':
+	    import sqlite3
+	    self.con = sqlite3.connect(db)
+	elif engine == 'mysql':
+	    import MySQLdb
+	    self.con = MySQLdb.connect(host=host, db=db, user=user, passwd=passwd, use_unicode=True)
 
     def get_messages(self, tags):
 	results = {}
@@ -16,10 +20,9 @@ class SQLConnector():
 	    cur.execute('select message.id, message.sender, message.subject, path.path, tag.name ' \
 		'from message, path, message_tag, tag ' \
 		'where message.id = path.message_id and message_tag.tag_id = tag.id ' \
-		'and message.id = message_tag.message_id; ' \
-		'select message.id, message.sender, message.subject, path.path, \'\' ' \
-		'from message, path, message_tag, tag ' \
-		'')
+		'and message.id = message_tag.message_id ' \
+		'union select message.id, message.sender, message.subject, path.path, \'\' ' \
+		'from message, path, message_tag, tag;')
 	else:
 	    taglist = ''
 	    for tag in tags:

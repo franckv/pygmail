@@ -19,7 +19,7 @@ class Query():
 	store.clear()
 
 	con = SQLConnector()
-	con.connect('localhost', 'pygmail', 'pygmail', 'pygmail')
+	con.connect('sqlite', '', 'db/pygmail.db', '', '')
 	self.messages = con.get_messages(self.querytags)
 	con.close()
 
