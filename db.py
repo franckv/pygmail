@@ -13,11 +13,11 @@ class SQLConnector():
 	results = {}
 	cur = self.con.cursor()
 	if len(tags) == 0:
-	    cur.execute('select message.id, message.from, message.subject, path.path, tag.name ' \
+	    cur.execute('select message.id, message.sender, message.subject, path.path, tag.name ' \
 		'from message, path, message_tag, tag ' \
 		'where message.id = path.message_id and message_tag.tag_id = tag.id ' \
 		'and message.id = message_tag.message_id; ' \
-		'select message.id, message.from, message.subject, path.path, \'\' ' \
+		'select message.id, message.sender, message.subject, path.path, \'\' ' \
 		'from message, path, message_tag, tag ' \
 		'')
 	else:
@@ -28,7 +28,7 @@ class SQLConnector():
 		taglist += "'" + tag + "'"
 	    print taglist
 	    cur.execute('select ' \
-		    'message.id, message.from, message.subject, path.path, tag.name ' \
+		    'message.id, message.sender, message.subject, path.path, tag.name ' \
 		    'from message, path, message_tag, tag ' \
 		    'where message.id = path.message_id and message_tag.tag_id = tag.id ' \
 		    'and message.id = message_tag.message_id ' \

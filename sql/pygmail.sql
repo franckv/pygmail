@@ -12,7 +12,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `message` (
   `id` int(11) NOT NULL auto_increment,
-  `from` varchar(50) default NULL,
+  `sender` varchar(50) default NULL,
   `subject` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
