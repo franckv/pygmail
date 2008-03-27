@@ -5,7 +5,9 @@
 CREATE TABLE IF NOT EXISTS message (
   id integer NOT NULL PRIMARY KEY,
   sender varchar(50) NULL,
-  subject varchar(255) NULL
+  subject varchar(255) NULL,
+  account integer NOT NULL,
+  read boolean NOT NULL
 );
 
 
