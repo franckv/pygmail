@@ -6,6 +6,8 @@ from mailbox import mbox
 from email import header
 from email import Utils
 
+import recipients
+
 header.ecre = re.compile(r'''
   =\?                   # literal =?
   (?P<charset>[^?]*?)   # non-greedy up to the next ? is the charset
@@ -27,20 +29,20 @@ def decode_header(mail, var):
 
     return result
 
-def upload_mail(db, sender, subject, path):
+def upload_mail(db, sender_id, subject, path):
     cur = db.cursor()
     cur.execute('SELECT message_id from path WHERE path=?', (path,))
     row = cur.fetchone()
     new = False
     if not row:
 	new = True
-	cur.execute('INSERT INTO message (sender, subject, account, read) VALUES (?, ?, 1, 0);',
-		(sender.encode('utf8'), subject.encode('utf8')))
+	cur.execute('INSERT INTO message (sender, subject, account, read) VALUES (%i, ?, 1, 0);'
+		% sender_id, (subject.encode('utf8'),))
 	id = db.insert_id()
 	cur.execute('INSERT INTO path (message_id, path) VALUES ("%i", ?);' % id, (path.encode('utf8'),))
     else:
-	cur.execute('UPDATE message SET sender=?, subject=?, account=1, read=0 WHERE id=%i;' % row[0],
-		(sender.encode('utf8'), subject.encode('utf8')))
+	cur.execute('UPDATE message SET sender=%i, subject=?, account=1, read=0 WHERE id=%i;'
+		% (sender_id, row[0]), (subject.encode('utf8'),))
     cur.close()
     return new
 
@@ -61,9 +63,9 @@ def upload_dir(db, dirname):
 	    if mail != None:
 		sender = decode_header(mail, 'From')
 		(display, addr) = Utils.parseaddr(sender)
+		sender_id = recipients.recipient_id(db, display, addr)
 		subject = decode_header(mail, 'Subject')
-		#print sender, subject
-		new = upload_mail(db, addr, subject, filename)
+		new = upload_mail(db, sender_id, subject, filename)
 		if new:
 		    create += 1;
 		else:

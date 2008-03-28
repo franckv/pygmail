@@ -1,4 +1,5 @@
 from message import Message
+import recipients
 
 class SQLConnector():
     def __init__(self, engine, host, db, user, passwd):
@@ -58,13 +59,16 @@ class SQLConnector():
 
 	for row in cur.fetchall():
 	    id = row[0]
-	    sender = row[1]
+	    sender_id = row[1]
 	    subject = row[2]
 	    path = row[3]
 	    #tag = row[4]
 	    msg = Message(id)
-	    msg.put_header('From', sender)
-	    msg.put_header('Subject', subject)
+	    #msg.put_header('From', sender)
+	    #msg.put_header('Subject', subject)
+	    sender = recipients.get_display_name(self, sender_id)
+	    msg.set_sender(sender)
+	    msg.set_subject(subject)
 	    msg.set_path(path)
 	    #msg.put_tag(tag)
 	    results[id] = msg

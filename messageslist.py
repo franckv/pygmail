@@ -23,8 +23,8 @@ class Query():
 
 	nb = 0
 	for mail in self.messages.itervalues():
-	    sender = mail.get_header('From')
-	    subject = mail.get_header('Subject')
+	    sender = mail.get_sender()
+	    subject = mail.get_subject()
 	    #tags = mail.get_tags()
 	    #print tags
 	    iter = store.append([subject, sender, mail.id, mail.get_path()])

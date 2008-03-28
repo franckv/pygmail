@@ -17,6 +17,8 @@ header.ecre = re.compile(r'''
 class Message():
     def __init__(self, id = 0):
 	self.headers = {}
+	self.subject = None
+	self.sender = None
 	self.id = id
 	self.path = ''
 	self.mail = None
@@ -57,6 +59,18 @@ class Message():
 	    return self.headers[header][0]
 	else:
 	    return None
+
+    def set_sender(self, value):
+	self.sender = value
+
+    def get_sender(self):
+	return self.sender
+
+    def set_subject(self, value):
+	self.subject = value
+
+    def get_subject(self):
+	return self.subject
 
     def put_header(self, header, value):
 	if not self.headers.has_key(header):
