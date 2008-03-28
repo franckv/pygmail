@@ -1,6 +1,17 @@
 from email import header
 from mailbox import mbox
 
+header.ecre = re.compile(r'''
+  =\?                   # literal =?
+  (?P<charset>[^?]*?)   # non-greedy up to the next ? is the charset
+  \?                    # literal ?
+  (?P<encoding>[qb])    # either a "q" or a "b", case insensitive
+  \?                    # literal ?
+  (?P<encoded>.*?)      # non-greedy up to the next ?= is the encoded string
+  \?=                   # literal ?=
+  #(?=[ \t]|$)           # whitespace or the end of the string
+  ''', re.VERBOSE | re.IGNORECASE | re.MULTILINE)
+
 class Message():
     def __init__(self, id = 0):
 	self.headers = {}

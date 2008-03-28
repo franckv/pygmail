@@ -1,11 +1,26 @@
 import os.path
 import dircache
+import re
+
 from mailbox import mbox
 from email import header
+from email import Utils
+
+header.ecre = re.compile(r'''
+  =\?                   # literal =?
+  (?P<charset>[^?]*?)   # non-greedy up to the next ? is the charset
+  \?                    # literal ?
+  (?P<encoding>[qb])    # either a "q" or a "b", case insensitive
+  \?                    # literal ?
+  (?P<encoded>.*?)      # non-greedy up to the next ?= is the encoded string
+  \?=                   # literal ?=
+  #(?=[ \t]|$)           # whitespace or the end of the string
+  ''', re.VERBOSE | re.IGNORECASE | re.MULTILINE) 
 
 def decode_header(mail, var):
     result = ''
-    for (decoded, enc) in header.decode_header(mail.get(var)):
+    value = mail.get(var)
+    for (decoded, enc) in header.decode_header(value):
 	if enc:
 	    decoded = decoded.decode(enc)
 	result += decoded
@@ -45,9 +60,10 @@ def upload_dir(db, dirname):
 	for mail in mails:
 	    if mail != None:
 		sender = decode_header(mail, 'From')
+		(display, addr) = Utils.parseaddr(sender)
 		subject = decode_header(mail, 'Subject')
 		#print sender, subject
-		new = upload_mail(db, sender, subject, filename)
+		new = upload_mail(db, addr, subject, filename)
 		if new:
 		    create += 1;
 		else:
