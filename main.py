@@ -8,6 +8,7 @@ import pygtk, gtk, gtk.glade
 from messageslist import Query
 from dialogs import TextEntryDialog
 from db import SQLConnector
+import upload
 
 class MainWindow(gobject.GObject):
     def __init__(self):
@@ -118,6 +119,25 @@ class MainWindow(gobject.GObject):
 	gtk.main_quit()
 	gobject.timeout_add(200, os._exit, 0)
 	sys.exit(0)
+
+    def on_import(self, widget=None, event=None): 
+	dialog = gtk.FileChooserDialog('Import', self.window,
+		gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+		('Cancel', gtk.RESPONSE_CANCEL,
+		'Choose', gtk.RESPONSE_OK))
+
+	response = dialog.run()
+	if response == gtk.RESPONSE_OK:
+	    path = dialog.get_filename()
+	    dialog.destroy()
+
+	    (create, update) = upload.upload_dir(self.db, path)
+
+	    status = self.xml.get_widget('statusbar')
+	    status.pop(1)
+	    status.push(1, '%i new, %i updated' % (create, update))
+	else:
+	    dialog.destroy()
 
     def do_search(self, widget=None, event=None):
 	listStore = self.msgList.get_model()

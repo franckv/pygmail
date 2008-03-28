@@ -13,9 +13,25 @@ class SQLConnector():
 	if self.engine == 'sqlite':
 	    import sqlite3
 	    self.con = sqlite3.connect(self.db)
-	elif engine == 'mysql':
+	elif self.engine == 'mysql':
 	    import MySQLdb
 	    self.con = MySQLdb.connect(host=self.host, db=self.db, user=self.user, passwd=self.passwd, use_unicode=True)
+
+    def cursor(self):
+	return self.con.cursor()
+
+    def commit(self):
+	self.con.commit()
+
+    def insert_id(self):
+	if self.engine == 'sqlite':
+	    cur = self.con.cursor()
+	    cur.execute('SELECT LAST_INSERT_ROWID()')
+	    row = cur.fetchone()
+	    cur.close()
+	    return row[0]
+	elif self.engine == 'mysql':
+	    return self.con.insert_id()
 
     def get_messages(self, tags):
 	results = {}
