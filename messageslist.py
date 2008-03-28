@@ -27,9 +27,10 @@ class Query():
 	for mail in self.messages.itervalues():
 	    sender = mail.get_header('From')
 	    subject = mail.get_header('Subject')
-	    tags = mail.get_tags()
-	    print tags
+	    #tags = mail.get_tags()
+	    #print tags
 	    iter = store.append([subject, sender, mail.id, mail.get_path()])
 	    nb += 1
 	
+	print '%s messages read from db' % (nb)
 	return nb

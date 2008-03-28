@@ -17,12 +17,10 @@ class SQLConnector():
 	results = {}
 	cur = self.con.cursor()
 	if len(tags) == 0:
-	    cur.execute('select message.id, message.sender, message.subject, path.path, tag.name ' \
-		'from message, path, message_tag, tag ' \
-		'where message.id = path.message_id and message_tag.tag_id = tag.id ' \
-		'and message.id = message_tag.message_id ' \
-		'union select message.id, message.sender, message.subject, path.path, \'\' ' \
-		'from message, path, message_tag, tag;')
+	    print 'no search tags'
+	    cur.execute('select message.id, message.sender, message.subject, path.path ' \
+		    'from message, path ' \
+		    'where message.id = path.message_id;')
 	else:
 	    taglist = ''
 	    for tag in tags:
@@ -31,29 +29,23 @@ class SQLConnector():
 		taglist += "'" + tag + "'"
 	    print taglist
 	    cur.execute('select ' \
-		    'message.id, message.sender, message.subject, path.path, tag.name ' \
+		    'message.id, message.sender, message.subject, path.path ' \
 		    'from message, path, message_tag, tag ' \
 		    'where message.id = path.message_id and message_tag.tag_id = tag.id ' \
 		    'and message.id = message_tag.message_id ' \
 		    'and tag.name in (' + taglist + ');')
-		    #'and message.id in ' \
-		    #'(select message_tag.message_id ' \
-		    #' from message_tag ' \
-		    #'where message_tag.tag_id in ' \
-		    #'(select tag.id from tag where tag.name in ' \
-		    #'(' + taglist + ')));')
 
 	for row in cur.fetchall():
 	    id = row[0]
 	    sender = row[1]
 	    subject = row[2]
 	    path = row[3]
-	    tag = row[4]
+	    #tag = row[4]
 	    msg = Message(id)
 	    msg.put_header('From', sender)
 	    msg.put_header('Subject', subject)
 	    msg.set_path(path)
-	    msg.put_tag(tag)
+	    #msg.put_tag(tag)
 	    results[id] = msg
 	cur.close()
 
