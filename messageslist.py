@@ -2,9 +2,10 @@ from db import SQLConnector
 from message import Message
 
 class Query():
-    def __init__(self):
+    def __init__(self, db):
 	self.messages = {}
 	self.querytags = []
+	self.db = db
 
     def get_message(self, id):
 	if not self.messages.has_key(id):
@@ -18,10 +19,7 @@ class Query():
     def getMsgList(self, store):
 	store.clear()
 
-	con = SQLConnector()
-	con.connect('sqlite', '', 'db/pygmail.db', '', '')
-	self.messages = con.get_messages(self.querytags)
-	con.close()
+	self.messages = self.db.get_messages(self.querytags)
 
 	nb = 0
 	for mail in self.messages.itervalues():

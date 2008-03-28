@@ -7,6 +7,7 @@ import pygtk, gtk, gtk.glade
 
 from messageslist import Query
 from dialogs import TextEntryDialog
+from db import SQLConnector
 
 class MainWindow(gobject.GObject):
     def __init__(self):
@@ -35,6 +36,8 @@ class MainWindow(gobject.GObject):
 
 	self.opener = urllib.FancyURLopener()
 	self.currentUrl = None
+
+	self.db = SQLConnector('sqlite', '', 'db/pygmail.db', '', '')
 
     def is_relative_to_server(self, url):
 	parts = urlparse.urlparse(url)
@@ -120,7 +123,7 @@ class MainWindow(gobject.GObject):
 	listStore = self.msgList.get_model()
 	self.msgList.set_model(None)
 
-	self.query = Query()
+	self.query = Query(self.db)
 	tagsSearchEntry = self.xml.get_widget('tagsSearchEntry')
 	tags = tagsSearchEntry.get_text()
 	if tags != '':

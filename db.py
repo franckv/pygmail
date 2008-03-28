@@ -1,20 +1,25 @@
 from message import Message
 
 class SQLConnector():
-    def __init_(self):
+    def __init__(self, engine, host, db, user, passwd):
 	self.con = None
-
-    def connect(self, engine, host, db, user, passwd):
 	self.engine = engine
-	if engine == 'sqlite':
+	self.host = host
+	self.db = db
+	self.user = user
+	self.passwd = passwd
+
+    def connect(self):
+	if self.engine == 'sqlite':
 	    import sqlite3
-	    self.con = sqlite3.connect(db)
+	    self.con = sqlite3.connect(self.db)
 	elif engine == 'mysql':
 	    import MySQLdb
-	    self.con = MySQLdb.connect(host=host, db=db, user=user, passwd=passwd, use_unicode=True)
+	    self.con = MySQLdb.connect(host=self.host, db=self.db, user=self.user, passwd=self.passwd, use_unicode=True)
 
     def get_messages(self, tags):
 	results = {}
+	self.connect()
 	cur = self.con.cursor()
 	if len(tags) == 0:
 	    print 'no search tags'
@@ -48,6 +53,7 @@ class SQLConnector():
 	    #msg.put_tag(tag)
 	    results[id] = msg
 	cur.close()
+	self.close()
 
 	return results
 
