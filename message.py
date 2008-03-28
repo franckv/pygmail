@@ -1,3 +1,5 @@
+import re
+
 from email import header
 from mailbox import mbox
 
