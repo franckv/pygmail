@@ -132,6 +132,7 @@ class MainWindow(gobject.GObject):
 	    dialog.destroy()
 
 	    (create, update) = upload.upload_dir(self.db, path)
+	    self.do_clear_search()
 
 	    status = self.xml.get_widget('statusbar')
 	    status.pop(1)
