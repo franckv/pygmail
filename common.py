@@ -1,0 +1,2 @@
+PROGNAME = 'Pygmail'
+PROGVERSION = '0.1'
