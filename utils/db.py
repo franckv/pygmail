@@ -1,15 +1,12 @@
-from indexmanager import IndexManager
 from model import Base
 from . import BaseUtils
 
 class DBUtils(BaseUtils):
-    @classmethod
     def create(self):
-        Base.metadata.create_all(IndexManager().engine)
+        Base.metadata.create_all(self.session.bind)
 
-    @classmethod
     def drop(self):
-        Base.metadata.drop_all(IndexManager().engine)
+        Base.metadata.drop_all(self.session.bind)
 
     def truncate(self, table):
         if table.__table__.exists(self.session.bind):

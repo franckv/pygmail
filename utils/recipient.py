@@ -13,11 +13,11 @@ class RecipientUtils(BaseUtils):
         return results
 
 
-    def lookup_recipient(self, display, mail):
+    def lookup_recipient(self, display, mail, create):
         query = self.session.query(Recipient)
 
         recipient = query.filter(Recipient.mail == mail).first()
-        if recipient is None:
+        if recipient is None and create:
             recipient = Recipient(display, mail)
             self.session.add(recipient)
 

@@ -1,11 +1,16 @@
-from indexmanager import IndexManager
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+import config
 
 class BaseUtils(object):
     def __init__(self, session = None):
         if session:
             self.session = session
         else:
-            self.session = IndexManager().get_session()
+            engine = create_engine(config.engine, echo=True)
+            Session = sessionmaker(bind=engine)
+            self.session = Session()
 
     def close(self):
         if self.session:

@@ -4,21 +4,21 @@ import config
 import maildir
 
 from model import Message, Thread, Tag, Path
-from utils import MessageUtils, RecipientUtils, DBUtils, TagUtils
+from utils import IndexUtils
 
 def do_list():
-    utils = MessageUtils()
+    utils = IndexUtils()
 
-    ids = utils.get_ids()
+    ids = utils.message.get_ids()
 
     for id in ids: print id 
 
     utils.close()
 
 def do_list_recipients():
-    utils = RecipientUtils()
+    utils = IndexUtils()
 
-    recipients = utils.get_recipients()
+    recipients = utils.recipient.get_recipients()
 
     for recipient in recipients:
         print recipient.__unicode__()
@@ -26,9 +26,9 @@ def do_list_recipients():
     utils.close()
 
 def do_list_tags():
-    utils = TagUtils()
+    utils = IndexUtils()
 
-    tags = utils.get_tags()
+    tags = utils.tag.get_tags()
 
     for tag in tags:
         print tag.__unicode__()
@@ -36,16 +36,16 @@ def do_list_tags():
     utils.close()
 
 def do_delete(id):
-    utils = MessageUtils()
+    utils = IndexUtils()
 
-    utils.delete(id)
+    utils.message.delete(id)
 
     utils.close()
 
 def do_tag(id, tagname):
-    utils = ThreadUtils()
+    utils = IndexUtils()
 
-    utils.add_tag(id, tagname)
+    utils.thread.add_tag(id, tagname)
 
     utils.close()
 
@@ -54,18 +54,22 @@ def do_search(query):
     print('search: ' + query)
 
 def do_reset():
-    utils = DBUtils()
+    utils = IndexUtils()
 
     for cls in (Message, Thread, Tag, Path):
-        utils.truncate(cls)
+        utils.db.truncate(cls)
 
     utils.close()
 
 def do_create():
-    DBUtils.create()
+    utils = IndexUtils()
+    utils.db.create()
+    utils.close()
 
 def do_drop():
-    DBUtils.drop()
+    utils = IndexUtils()
+    utils.db.drop()
+    utils.close()
 
 def do_sync(name):
 
@@ -82,30 +86,29 @@ def do_sync(name):
             return
 
         # TODO: merge service interfaces
-        messageutils = MessageUtils()
-        recipientutils = RecipientUtils(messageutils.session)
+        utils = IndexUtils()
 
         # TODO: move that to a maildir utils interface
         mails = maildir.get_mails(uri)
         for (uid, mail) in mails.items():
-            if not messageutils.exists(uid):
+            if not utils.message.exists(uid):
                 filename = mails.get_file(uid)._file.name
                 (display, addr) = maildir.get_sender(mail)
                 subject = maildir.get_subject(mail)
 
                 msg = Message() 
                 msg.uid = uid
-                msg.sender = recipientutils.lookup_recipient(display, addr)
+                msg.sender = utils.recipient.lookup_recipient(display, addr, True)
                 msg.subject = subject
                 msg.path = Path(filename)
                 msg.thread = Thread()
 
-                messageutils.add(msg)
+                utils.message.add(msg)
             else:
                 # assumes emails are immutable
                 pass
 
-        messageutils.close()
+        utils.close()
 
 list = {
         'list': {'args': 0, 'exec': do_list},
@@ -113,6 +116,8 @@ list = {
         'list_tags': {'args': 0, 'exec': do_list_tags},
         'sync': {'args': 1, 'exec': do_sync},
         'reset': {'args': 0, 'exec': do_reset},
+        'drop': {'args': 0, 'exec': do_drop},
+        'create': {'args': 0, 'exec': do_create},
         'search': {'args': 1, 'exec': do_search},
         'delete': {'args': 1, 'exec': do_delete}
 }
