@@ -2,7 +2,6 @@
 
 import sys
 import curses
-import curses.ascii
 import locale
 
 import common
@@ -186,7 +185,9 @@ def main(stdscr):
         else:
             screen.write_str(c)
 
+def run(args = None):
+    curses.wrapper(main)
 
 if __name__ == '__main__':
-    curses.wrapper(main)
+    run()
 

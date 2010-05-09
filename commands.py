@@ -1,9 +1,9 @@
 import os, os.path
 
 import config
-import maildir
 
 from model import Message, Thread, Tag, Path
+from mbox import maildir
 from utils import IndexUtils
 
 def do_list():

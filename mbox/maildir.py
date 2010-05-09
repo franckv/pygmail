@@ -50,7 +50,6 @@ def get_mails(uri):
     md = Maildir(uri, factory=None)
 
     return md
-        
 
 def get_mail(filename):
     if not os.path.exists(filename):

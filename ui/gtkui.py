@@ -13,7 +13,7 @@ from dialogs import TextEntryDialog
 class MainWindow(gobject.GObject):
     def __init__(self):
         gobject.GObject.__init__(self)
-        self.xml = gtk.glade.XML('ui/pygmail.glade', 'MainWindow', 'pygmail')
+        self.xml = gtk.glade.XML('ui/ui.glade', 'MainWindow', 'pygmail')
         self.window = self.xml.get_widget('MainWindow')
         self.window.set_title('Pygmail')
 
@@ -238,9 +238,9 @@ class MainWindow(gobject.GObject):
                 print name	
             dialog.destroy()
 
-def main():
+def run(args = None):
     win = MainWindow()
     gtk.main()
 
 if __name__ == '__main__':
-    main()
+    run()
