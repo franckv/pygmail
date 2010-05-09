@@ -16,9 +16,9 @@ mails = mbox(options.filename)
 for mail in mails:
     outfilename = mail.get('X-UIDL')
     if outfilename == None:
-	continue
+        continue
     if os.path.exists(outfilename):
-	continue
+        continue
     outfile = open(outfilename, 'w')
     g = Generator(outfile, mangle_from_=False, maxheaderlen=60)
     g.flatten(mail, True)
