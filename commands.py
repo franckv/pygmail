@@ -2,83 +2,73 @@ import os, os.path
 
 import config
 import maildir
-import utils
 
-from indexmanager import IndexManager
-from model import Base, Message, Thread, Tag, Path, Recipient
-
-def get_index():
-    return IndexManager()                                                                                                                                                  
+from model import Message, Thread, Tag, Path
+from utils import MessageUtils, RecipientUtils, DBUtils, TagUtils
 
 def do_list():
-    session = get_index().get_session()
-    query = session.query(Message)
+    utils = MessageUtils()
 
-    for msg in query.all():
-        print msg.id
+    ids = utils.get_ids()
 
-    session.close()
+    for id in ids: print id 
+
+    utils.close()
 
 def do_list_recipients():
-    session = get_index().get_session()
-    query = session.query(Recipient)
+    utils = RecipientUtils()
 
-    for recipient in query.all():
+    recipients = utils.get_recipients()
+
+    for recipient in recipients:
         print recipient.__unicode__()
 
-    session.close()
+    utils.close()
+
+def do_list_tags():
+    utils = TagUtils()
+
+    tags = utils.get_tags()
+
+    for tag in tags:
+        print tag.__unicode__()
+
+    utils.close()
 
 def do_delete(id):
-    session = get_index().get_session()
-    query = session.query(Message)
-    msg = query.filter(Message.id == id).first()
+    utils = MessageUtils()
 
-    if not msg is None:
-        session.delete(msg)
-        session.commit()
+    utils.delete(id)
 
-    session.close()
+    utils.close()
 
 def do_tag(id, tagname):
-    session = get_index().get_session()
-    query = session.query(Thread)
-    thread = query.filter(Thread.id == id).first()
+    utils = ThreadUtils()
 
-    tag = utils.lookup_tag(tagname, session)
+    utils.add_tag(id, tagname)
 
-    thread.tags.append(tag)
-
-    session.commit()
-    session.close()
+    utils.close()
 
 
 def do_search(query):
     print('search: ' + query)
 
 def do_reset():
-    session = get_index().get_session()
+    utils = DBUtils()
 
-    try:
-        for cls in (Message, Thread, Tag, Path):
-            if cls.__table__.exists(get_index().engine):
-                query = session.query(cls)
-                query.delete()
+    for cls in (Message, Thread, Tag, Path):
+        utils.truncate(cls)
 
-        session.commit()
-    finally:
-        session.close()
+    utils.close()
 
 def do_create():
-    index = get_index()
-    
-    Base.metadata.create_all(index.engine)
+    DBUtils.create()
 
 def do_drop():
-    index = get_index()
-
-    Base.metadata.drop_all(index.engine)
+    DBUtils.drop()
 
 def do_sync(name):
+
     if not name in config.stores:
         print('Invalid store')
     else:
@@ -91,39 +81,36 @@ def do_sync(name):
             print('Invalid uri: %s' % uri)
             return
 
+        # TODO: merge service interfaces
+        messageutils = MessageUtils()
+        recipientutils = RecipientUtils(messageutils.session)
 
-        session = get_index().get_session()
-        query = session.query(Message)
-
+        # TODO: move that to a maildir utils interface
         mails = maildir.get_mails(uri)
         for (uid, mail) in mails.items():
-
-            msg = query.filter(Message.uid == uid).first()
-
-            if msg is None:
+            if not messageutils.exists(uid):
                 filename = mails.get_file(uid)._file.name
                 (display, addr) = maildir.get_sender(mail)
                 subject = maildir.get_subject(mail)
 
                 msg = Message() 
                 msg.uid = uid
-                msg.sender = utils.lookup_recipient(display, addr, session)
+                msg.sender = recipientutils.lookup_recipient(display, addr)
                 msg.subject = subject
                 msg.path = Path(filename)
                 msg.thread = Thread()
 
-                session.add(msg)
+                messageutils.add(msg)
             else:
                 # assumes emails are immutable
                 pass
 
-        session.commit()
-        session.close()
-
+        messageutils.close()
 
 list = {
         'list': {'args': 0, 'exec': do_list},
         'list_recipients': {'args': 0, 'exec': do_list_recipients},
+        'list_tags': {'args': 0, 'exec': do_list_tags},
         'sync': {'args': 1, 'exec': do_sync},
         'reset': {'args': 0, 'exec': do_reset},
         'search': {'args': 1, 'exec': do_search},
