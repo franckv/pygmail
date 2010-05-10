@@ -1,9 +1,8 @@
-#import gtkhtml2
 import urllib
 import urlparse
 import os, sys
 import gobject
-import pygtk, gtk, gtk.glade
+import pygtk, gtk, gtk.glade, gtkhtml2
 
 #from messageslist import Query
 from dialogs import TextEntryDialog
@@ -21,12 +20,12 @@ class MainWindow(gobject.GObject):
 
         self.init_search_tab()
 
-        #self.msgViewHTML = gtkhtml2.View()
-        #self.msgViewHTML.connect('on_url', self.on_url)
-        #self.msgViewHTML.set_document(gtkhtml2.Document())
+        self.msgViewHTML = gtkhtml2.View()
+        self.msgViewHTML.connect('on_url', self.on_url)
+        self.msgViewHTML.set_document(gtkhtml2.Document())
 
         scrolledMsgViewHTML = self.xml.get_widget('scrolledMsgViewHTML')
-        #scrolledMsgViewHTML.add(self.msgViewHTML)
+        scrolledMsgViewHTML.add(self.msgViewHTML)
 
         self.msgViewText = self.xml.get_widget('msgViewText')
 
@@ -163,7 +162,7 @@ class MainWindow(gobject.GObject):
         listStore.clear()
         self.msgViewText.get_buffer().set_text('')
         self.msgViewHeaders.get_buffer().set_text('')
-        #self.msgViewHTML.set_document(gtkhtml2.Document())
+        self.msgViewHTML.set_document(gtkhtml2.Document())
         status = self.xml.get_widget('statusbar')
         status.pop(1)
 
@@ -195,7 +194,7 @@ class MainWindow(gobject.GObject):
             document.open_stream('text/html')
             document.write_stream(body)
             document.close_stream()
-            #self.msgViewHTML.set_document(document)
+            self.msgViewHTML.set_document(document)
         elif type == 'headers':
             buffer = self.msgViewHeaders.get_buffer().set_text(headers)
         else:
