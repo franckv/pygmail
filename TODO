@@ -1,2 +1,1 @@
-* Fix gtkhtml2
-* Add flag to know when to commit
+* Add flag to know when to commit (ie don't commit selects)
