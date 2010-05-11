@@ -1,7 +1,7 @@
 import os, sys
 from optparse import OptionParser
 
-from ui import ncurses, gtkui
+import ui.ncurses, ui.gtkui
 
 import commands
 
@@ -13,9 +13,9 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     if options.ui == 'curses':
-        ncurses.run()
+        ui.ncurses.run()
     elif options.ui == 'gtk':
-        gtkui.run()
+        ui.gtkui.run()
     else:
         if len(args) == 0:
             parser.error('missing command')
