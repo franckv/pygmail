@@ -35,6 +35,7 @@ class Screen(BaseWidget):
     def redraw(self):
         for child in self.childs: child.redraw()
 
-
     def refresh(self):
         for child in self.childs: child.refresh()
+        #self.win.refresh()
+        curses.doupdate()

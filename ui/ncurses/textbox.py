@@ -39,7 +39,8 @@ class TextBox(BaseWidget):
     def refresh(self):
         self.win.clear()
         self.write(self.text)
-        self.win.refresh()
+
+        super(TextBox, self).refresh()
 
     def set_text(self, text):
         self.text = text

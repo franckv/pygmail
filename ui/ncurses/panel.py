@@ -15,4 +15,4 @@ class Panel(BaseWidget):
 
     def refresh(self):
         self.fill('#')
-        self.win.refresh()
+        super(Panel, self).refresh()

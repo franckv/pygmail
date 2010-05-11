@@ -75,6 +75,7 @@ class BaseWidget(object):
         self.win.clear()
 
     def refresh(self):
-        self.win.refresh()
+        #self.win.refresh()
+        self.win.noutrefresh()
         for child in self.childs: child.refresh()
 
