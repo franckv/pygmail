@@ -23,10 +23,8 @@ class CommandHandler(object):
                 (y, x) = self.screen.get_pos()
                 self.screen.move(y, x+1)
             elif c == '<KEY_DOWN>':
-                self.screen.win.scroll(1)
                 self.screen.refresh()
             elif c == '<KEY_UP>':
-                self.screen.win.scroll(-1)
                 self.screen.refresh()
             elif c == '<KEY_RESIZE>':
                 self.screen.redraw()
@@ -35,10 +33,7 @@ class CommandHandler(object):
                 self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
                 self.run_command(cmd)
             elif c == '<KEY_ENTER>' or c == '\n':
-                (y, x) = self.screen.get_pos()
-                (maxy, maxx) = self.screen.win.getmaxyx()
-                if y < maxy - 3:
-                    self.screen.move(y+1, 0)
+                self.screen.refresh()
             else:
                 pass
                 #screen.main.write(c)
@@ -46,4 +41,5 @@ class CommandHandler(object):
     def run_command(self, cmd):
         if cmd == 'q' or cmd == 'quit':
             self.screen.destroy()
-
+        else:
+            self.screen.main.add_line(cmd)
