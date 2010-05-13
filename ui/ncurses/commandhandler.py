@@ -29,7 +29,7 @@ class CommandHandler(object):
                 self.screen.win.scroll(-1)
                 self.screen.refresh()
             elif c == '<KEY_RESIZE>':
-                self.screen.resize()
+                self.screen.redraw()
             elif c == ':':
                 cmd = self.screen.read_command()
                 self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
