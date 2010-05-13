@@ -17,6 +17,16 @@ class MessageUtils(BaseUtils):
         msg = query.filter(Message.id == id).first()
         return msg
 
+    def get_messages(self, limit = 10):
+        results = []
+
+        query = self.session.query(Message).limit(limit)
+
+        for msg in query.all():
+            results.append(msg)
+
+        return results
+
     def exists(self, uid):
         query = self.session.query(Message)
         msg = query.filter(Message.uid == uid).first()

@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -8,9 +10,10 @@ class BaseUtils(object):
         if session:
             self.session = session
         else:
-            engine = create_engine(config.engine, echo=True)
+            engine = create_engine(config.engine)
             Session = sessionmaker(bind=engine)
             self.session = Session()
+            logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
     def close(self):
         if self.session:
