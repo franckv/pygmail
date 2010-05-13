@@ -1,6 +1,6 @@
 import log
 
-class CommandHandler:
+class CommandHandler(object):
     def __init__(self, screen):
         self.screen = screen
         screen.set_handler(self)
