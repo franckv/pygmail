@@ -1,3 +1,5 @@
+import log
+
 class CommandHandler:
     def __init__(self, screen):
         self.screen = screen
@@ -7,6 +9,7 @@ class CommandHandler:
     def handle(self):
         while True:
             c = self.screen.get_char()
+            log.debug(c)
 
             if c is None:
                 continue
