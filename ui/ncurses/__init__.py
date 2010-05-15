@@ -20,8 +20,7 @@ def main(stdscr):
 
     screen.refresh()
 
-    handler = CommandHandler(screen)
-    handler.handle()
+    screen.run()
 
 def run(args = None):
     curses.wrapper(main)
