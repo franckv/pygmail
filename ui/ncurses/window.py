@@ -1,11 +1,5 @@
 import log
-from widget.screen import Screen
-from widget.statusbar import StatusBar
-from widget.commandbar import CommandBar
-from widget.titlebar import TitleBar
-from widget.panel import Panel
-from widget.textpanel import TextPanel
-from widget.itemlist import ItemList
+from widget import Screen, StatusBar, CommandBar, TitleBar, Panel, TextPanel, ItemList
 
 class Window(Screen):
     def __init__(self, win):
