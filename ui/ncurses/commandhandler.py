@@ -19,31 +19,24 @@ class CommandHandler(object):
             if c is None:
                 continue
 
+
             (y, x) = self.screen.get_pos()
             self.screen.set_status('(%i, %i) : <%s>' % (y, x, c.strip()))
-            if c == '<KEY_LEFT>':
-                (y, x) = self.screen.get_pos()
-                self.screen.move(y, x-1)
-            elif c == '<KEY_RIGHT>':
-                (y, x) = self.screen.get_pos()
-                self.screen.move(y, x+1)
-            elif c == '<KEY_DOWN>':
-                self.screen.main.move_down()
-                self.screen.refresh()
-            elif c == '<KEY_UP>':
-                self.screen.main.move_up()
-                self.screen.refresh()
-            elif c == '<KEY_RESIZE>':
-                self.screen.redraw()
+
+            events = ['<KEY_LEFT>', '<KEY_RIGHT>', '<KEY_DOWN>', '<KEY_UP>', '<KEY_RESIZE>', '<KEY_ENTER>', '<KEY_BACKSPACE>']
+
+            if c in events:
+                self.screen.send_event(c)
             elif c == ':':
                 cmd = self.screen.read_command()
                 self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
                 self.run_command(cmd)
-            elif c == '<KEY_ENTER>' or c == '\n':
-                self.screen.refresh()
+            elif c == '/':
+                search = self.screen.read_search()
+                self.screen.set_status('(%i, %i) : <%s>' % (y, x, search.strip()))
+                self.run_search(search)
             else:
                 pass
-                #screen.main.write(c)
 
     def run_command(self, cmd):
         if cmd == 'q' or cmd == 'quit':
@@ -67,3 +60,6 @@ class CommandHandler(object):
             self.screen.set_status('cleared')
         else:
             pass
+
+    def run_search(self, search):
+        pass
