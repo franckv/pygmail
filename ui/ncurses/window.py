@@ -31,8 +31,15 @@ class Window(Screen):
         return self.command.get_char()
 
     def read_command(self):
-        return self.command.read(':')
+        return self.command.read(':', self.validate_command_input)
 
     def read_search(self):
-        return self.command.read('/')
+        return self.command.read('/', self.validate_command_input)
+
+    def validate_command_input(self, c):
+        (y, x) = self.command.get_pos()
+        self.set_status('(%i, %i) : <%s>' % (y, x, c.strip()))
+    
+        return True
+
 
