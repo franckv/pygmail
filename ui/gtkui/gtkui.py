@@ -4,15 +4,14 @@ import os, sys
 import gobject
 import pygtk, gtk, gtk.glade, gtkhtml2
 
-#from messageslist import Query
+from utils import IndexUtils
 from dialogs import TextEntryDialog
-#from db import SQLConnector
 #import upload
 
 class MainWindow(gobject.GObject):
     def __init__(self):
         gobject.GObject.__init__(self)
-        self.xml = gtk.glade.XML('ui/ui.glade', 'MainWindow', 'pygmail')
+        self.xml = gtk.glade.XML('ui/gtkui/ui.glade', 'MainWindow', 'pygmail')
         self.window = self.xml.get_widget('MainWindow')
         self.window.set_title('Pygmail')
 
@@ -36,8 +35,6 @@ class MainWindow(gobject.GObject):
 
         self.opener = urllib.FancyURLopener()
         self.currentUrl = None
-
-        #self.db = SQLConnector('sqlite', '', 'db/pygmail.db', '', '')
 
     def is_relative_to_server(self, url):
         parts = urlparse.urlparse(url)
@@ -143,14 +140,19 @@ class MainWindow(gobject.GObject):
         listStore = self.msgList.get_model()
         self.msgList.set_model(None)
 
-        self.query = Query(self.db)
         tagsSearchEntry = self.xml.get_widget('tagsSearchEntry')
         tags = tagsSearchEntry.get_text()
         if tags != '':
             for tag in tags.split(' '):
                 if tag != '':
-                    self.query.add_query_tag(tag)
-        nb = self.query.getMsgList(listStore)
+                    pass
+
+        nb = 0
+        utils = IndexUtils()
+        for msg in utils.message.get_messages():
+            listStore.append([msg.subject, msg.sender.mail, msg.id, msg.path.path])
+            nb += 1
+        utils.close()
         status = self.xml.get_widget('statusbar')
         status.pop(1)
         status.push(1, str(nb) + ' messages')
@@ -210,12 +212,14 @@ class MainWindow(gobject.GObject):
             path = paths[0]
             iter = model.get_iter(path)
             id = model.get_value(iter, 2)
-            msg = self.query.get_message(id)
-            msg.open()
+            utils = IndexUtils()
+            msg = utils.message.get(id)
+            utils.close()
+            #msg.open()
             self.set_msgView(msg, 'plain')
             self.set_msgView(msg, 'html')
             self.set_msgView(msg, 'headers')
-            msg.close()
+            #msg.close()
             msgViewTabs = self.xml.get_widget('msgViewTabs')
             msgViewTabs.set_current_page(0)
 
