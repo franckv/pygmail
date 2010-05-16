@@ -1,5 +1,5 @@
-from . import BaseUtils
 from model import Message
+from utils import BaseUtils
 
 class MessageUtils(BaseUtils):
     def get_ids(self):

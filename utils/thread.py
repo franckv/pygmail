@@ -1,5 +1,5 @@
-from . import BaseUtils, TagUtils
 from model import Thread
+from utils import BaseUtils, TagUtils
 
 class ThreadUtils(BaseUtils):
     def add_tag(self, id, tagname):

@@ -11,7 +11,7 @@ def do_list():
 
     ids = utils.message.get_ids()
 
-    for id in ids: print id 
+    for id in ids: print(id)
 
     utils.close()
 
@@ -21,7 +21,7 @@ def do_list_recipients():
     recipients = utils.recipient.get_recipients()
 
     for recipient in recipients:
-        print recipient.__unicode__()
+        print(recipient.__unicode__())
 
     utils.close()
 
@@ -31,7 +31,7 @@ def do_list_tags():
     tags = utils.tag.get_tags()
 
     for tag in tags:
-        print tag.__unicode__()
+        print(tag.__unicode__())
 
     utils.close()
 

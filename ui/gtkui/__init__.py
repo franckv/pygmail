@@ -1,6 +1,6 @@
 import gtk
 
-from gtkui import MainWindow
+from ui.gtkui import MainWindow
 
 def run(args = None):
     win = MainWindow()

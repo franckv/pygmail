@@ -44,7 +44,7 @@ class MainWindow(gobject.GObject):
 
     def open_url(self, url):
         uri = self.resolve_uri(url)
-        print 'resolved:', uri
+        print('resolved: %s' % uri)
         return self.opener.open(uri)
 
     def resolve_uri(self, uri):
@@ -53,7 +53,7 @@ class MainWindow(gobject.GObject):
         return uri
 
     def request_url(self, document, url, stream):
-        print 'url requested:', url
+        print('url requested: %s' % url)
         #f = self.open_url(url)
         #stream.write(f.read())
 
@@ -66,10 +66,10 @@ class MainWindow(gobject.GObject):
             status.pop(0)
 
     def request_object(self, *args):
-        print 'request object', args
+        print('request object %s' % args)
 
     def link_clicked(self, document, link):
-        print 'link_clicked:', link
+        print('link_clicked: %s' % link)
         #try:
         #    f = self.open_url(link)
         #except OSError:
@@ -238,7 +238,7 @@ class MainWindow(gobject.GObject):
             dialog.set_value(str(id))
             if dialog.run() == gtk.RESPONSE_OK:
                 name = dialog.get_value()
-                print name	
+                print(name)
             dialog.destroy()
 
 def run(args = None):
