@@ -1,7 +1,7 @@
 import common
 import log
-from commandhandler import CommandHandler
-from widget import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel, ItemList
+from ui.ncurses.commandhandler import CommandHandler
+from ui.ncurses.widget import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel, ItemList
 
 class Window(Screen):
     def __init__(self, win):

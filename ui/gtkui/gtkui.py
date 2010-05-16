@@ -5,7 +5,7 @@ import gobject
 import pygtk, gtk, gtk.glade, gtkhtml2
 
 from utils import IndexUtils
-from dialogs import TextEntryDialog
+from ui.gtkui.dialogs import TextEntryDialog
 #import upload
 
 class MainWindow(gobject.GObject):

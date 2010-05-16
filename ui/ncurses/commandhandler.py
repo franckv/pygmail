@@ -2,7 +2,7 @@ import log
 import re
 import curses
 
-from widget import TextPanel
+from .widget import TextPanel
 from utils import IndexUtils
 
 class CommandHandler(object):

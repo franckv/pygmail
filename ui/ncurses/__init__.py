@@ -6,8 +6,8 @@ import logging
 
 import common
 import log
-from window import Window
-from commandhandler import CommandHandler
+from ui.ncurses.window import Window
+from ui.ncurses.commandhandler import CommandHandler
 
 def main(stdscr):
     log.init(logging.DEBUG, '/tmp/pygmail.log')

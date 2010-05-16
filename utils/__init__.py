@@ -1,9 +1,9 @@
-from base import BaseUtils
-from message import MessageUtils
-from recipient import RecipientUtils
-from tag import TagUtils
-from thread import ThreadUtils
-from db import DBUtils
+from utils.base import BaseUtils
+from utils.message import MessageUtils
+from utils.recipient import RecipientUtils
+from utils.tag import TagUtils
+from utils.thread import ThreadUtils
+from utils.db import DBUtils
 
 class IndexUtils(BaseUtils):
     def __init__(self):
