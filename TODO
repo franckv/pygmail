@@ -1,1 +1,2 @@
 * Add flag to know when to commit (ie don't commit selects)
+* Find algorithm to automatically calculate widgets sizes and positions
