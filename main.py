@@ -1,11 +1,15 @@
 import os, sys
 from optparse import OptionParser
+import logging
 
+import log
+import command
 import ui.ncurses, ui.gtkui
 
-import command
-
 if __name__ == '__main__':
+    log.init(logging.DEBUG, '/tmp/pygmail.log')
+    log.debug('Start')
+
     usage = 'Usage: %prog COMMAND [ARGS]'
     parser = OptionParser(usage)
     parser.add_option('--ui', dest='ui', default='console', help='interface: curses, gtk or console (default)')
@@ -32,3 +36,5 @@ if __name__ == '__main__':
             else:
                 command.list[cmd]['exec'](*args[1:])
 
+
+    log.debug('Stop')

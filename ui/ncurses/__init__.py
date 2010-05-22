@@ -2,17 +2,11 @@
 
 import curses
 import locale
-import logging
 
 import common
-import log
 from ui.ncurses.window import Window
-from ui.ncurses.commandhandler import CommandHandler
 
 def main(stdscr):
-    log.init(logging.DEBUG, '/tmp/pygmail.log')
-    log.debug('Start')
-
     screen = Window(stdscr)
 
     screen.set_title('%s v%s' % (common.PROGNAME, common.PROGVERSION))
@@ -24,5 +18,4 @@ def main(stdscr):
 
 def run(args = None):
     curses.wrapper(main)
-    log.debug('Stop')
 
