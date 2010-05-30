@@ -1,0 +1,3 @@
+[submodule "ui/ncurses/widget"]
+	path = ui/ncurses/widget
+	url = ../../../pycurses-widgets
