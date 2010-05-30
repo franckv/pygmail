@@ -35,6 +35,18 @@ def do_list_tags():
 
     utils.close()
 
+def do_show(id):
+    utils = IndexUtils()
+    msg = utils.message.get(id)
+    utils.close()
+
+    if msg:
+        print(msg.path.path)
+        mail = maildir.get_mail(msg.path.path)
+        content = maildir.get_content(mail)
+    else:
+        print('Not found')
+
 def do_delete(id):
     utils = IndexUtils()
 
@@ -114,6 +126,7 @@ list = {
         'list': {'args': 0, 'exec': do_list},
         'list_recipients': {'args': 0, 'exec': do_list_recipients},
         'list_tags': {'args': 0, 'exec': do_list_tags},
+        'show': {'args': 1, 'exec': do_show},
         'sync': {'args': 1, 'exec': do_sync},
         'reset': {'args': 0, 'exec': do_reset},
         'drop': {'args': 0, 'exec': do_drop},

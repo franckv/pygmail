@@ -60,3 +60,40 @@ def get_mail(filename):
     msg.close()
     return mail
 
+def get_content(mail, type = None):
+    content = ''
+    for part in mail.walk():
+        if part.get_content_maintype() == 'multipart' \
+            or part.get_content_maintype() == 'message':
+            continue
+
+        if type != None and type != 'raw' and part.get_content_subtype() != type:
+            continue
+
+        content_type = part.get_content_type()
+        #content += content_type + '\n'
+
+        filename = part.get_filename()
+        if filename:
+            content += filename + '\n'
+            continue
+
+        if part.get_content_maintype() != 'text':
+            continue
+
+        found = True
+        payload = part.get_payload(decode=True)
+        if part.get_content_charset() != None:
+            #content += part.get_content_charset() + '\n'
+            payload = payload.decode(part.get_content_charset())
+            if type == 'html':
+                payload = payload.encode(part.get_content_charset())
+            else:
+                payload = payload.encode('utf8')
+        else:
+            #TODO: get this from the user interface
+            defaultencoding = 'iso-8859-1'
+            payload = payload.decode(defaultencoding).encode('utf8')
+            content += payload
+    return content
+
