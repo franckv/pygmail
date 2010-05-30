@@ -12,5 +12,6 @@ def init(level, filename):
     )
 
 debug = logging.debug
+warn = logging.warn
 
 logger = logging.getLogger(common.PROGNAME)

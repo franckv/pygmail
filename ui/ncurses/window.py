@@ -7,9 +7,9 @@ class Window(Screen):
     def __init__(self, win):
         super(Window, self).__init__(win)
 
-        self.status = StatusBar(self)
-        self.title = TitleBar(self)
         self.handler = CommandHandler(self)
+
+        self.title = TitleBar(self)
 
         self.main = TabPanel(self)
         self.main.create_tab(ItemList, 'list')
@@ -17,10 +17,13 @@ class Window(Screen):
         self.main.create_tab(TextPanel, 'help')
         self.main.tabs['help'].add_line('Help !')
 
+        self.status = StatusBar(self)
         self.command = CommandBar(self)
 
         self.register_event('<KEY_TAB>', self.show_next_tab)
         self.register_event('<KEY_BTAB>', self.show_prev_tab)
+
+        self.redraw()
 
     def send_event(self, event):
         log.debug('received event %s' % event)
