@@ -3,7 +3,7 @@ import os, os.path
 import config
 
 from model import Message, Thread, Tag, Path
-from mbox import maildir
+from utils.mbox import maildir
 from utils.index import IndexUtils
 
 def do_list():
