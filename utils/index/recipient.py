@@ -1,4 +1,4 @@
-from utils.base import BaseUtils
+from base import BaseUtils
 from model import Recipient
 
 class RecipientUtils(BaseUtils):

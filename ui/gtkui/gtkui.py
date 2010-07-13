@@ -4,7 +4,7 @@ import os, sys
 import gobject
 import pygtk, gtk, gtk.glade, gtkhtml2
 
-from utils import IndexUtils
+from utils.index import IndexUtils
 from ui.gtkui.dialogs import TextEntryDialog
 #import upload
 

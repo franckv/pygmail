@@ -3,7 +3,7 @@ import re
 import curses
 
 from .widget import TextPanel
-from utils import IndexUtils
+from utils.index import IndexUtils
 
 class CommandHandler(object):
     def __init__(self, screen):

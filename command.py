@@ -4,7 +4,7 @@ import config
 
 from model import Message, Thread, Tag, Path
 from mbox import maildir
-from utils import IndexUtils
+from utils.index import IndexUtils
 
 def do_list():
     utils = IndexUtils()

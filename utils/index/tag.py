@@ -1,5 +1,5 @@
 from model import Tag
-from utils import BaseUtils
+from . import BaseUtils
 
 class TagUtils(BaseUtils):
     def get_tags(self):

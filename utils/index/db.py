@@ -1,5 +1,5 @@
 from model import Base
-from utils import BaseUtils
+from . import BaseUtils
 
 class DBUtils(BaseUtils):
     def create(self):
