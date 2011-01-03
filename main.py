@@ -4,10 +4,10 @@ import logging
 
 import log
 import command
-import ui.ncurses, ui.gtkui
+import ui.ncurses #, ui.gtkui
 
 if __name__ == '__main__':
-    log.init(logging.WARN, '/tmp/pygmail.log')
+    log.init(logging.DEBUG, '/tmp/pygmail.log')
     log.debug('Start')
 
     usage = 'Usage: %prog COMMAND [ARGS]'

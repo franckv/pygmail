@@ -2,13 +2,14 @@ import log
 import re
 import curses
 
-from .widget import TextPanel
+from pycurses_widgets import TextPanel
 from utils.index import IndexUtils
 
 class CommandHandler(object):
     def __init__(self, screen):
         self.screen = screen
         self.buf = ''
+        self.show_deleted = True
 
     def handle(self):
         curses.curs_set(0)
@@ -46,53 +47,32 @@ class CommandHandler(object):
                 if tab_name == 'list':
                     selected = self.screen.main.current.selected
                     if not selected is None:
-                        id = self.msgs[selected].id
-                        del self.msgs[selected]
-                        self.screen.main.current.clear_lines()
-                        for msg in self.msgs: self.screen.main.current.add_line('[%i] %s' % (msg.id, msg.subject))
                         log.debug('deleting message %i' % selected)
-                        utils = IndexUtils()
-                        utils.message.delete(id)
-                        utils.close()
+                        id = self.msgs[selected].id
+                        self.do_delete(id)
+            elif c == 'U':
+                tab_name = self.screen.main.current.name
+                if tab_name == 'list':
+                    selected = self.screen.main.current.selected
+                    if not selected is None:
+                        log.debug('undeleting message %i' % selected)
+                        id = self.msgs[selected].id
+                        self.do_undelete(id)
+            elif c == '$':
+                self.show_deleted = not self.show_deleted
+                self.do_refresh(None)
             else:
                 log.debug('unknown command %s' % c)
 
-    def run_command(self, cmd):
-        if cmd == 'q' or cmd == 'quit':
-            self.screen.destroy()
-        elif cmd == 'l' or cmd == 'list' or cmd.startswith('list '):
-            limit = 15
-            if cmd.startswith('list '):
-                try:
-                    limit = int(cmd[4:])
-                except:
-                    pass
-            self.screen.main.show_tab('list')
-            self.screen.main.current.clear_lines()
-
-            utils = IndexUtils()
-            self.msgs = utils.message.get_messages(limit)
-            for msg in self.msgs: self.screen.main.current.add_line('[%i] %s' % (msg.id, msg.subject))
-            utils.close()
-            self.screen.set_status('%i results' % len(self.msgs))
-            self.screen.update_title()
-        elif cmd.startswith('delete '):
-                id = int(cmd[7:])
-                for msg in self.msgs:
-                    if msg.id == id:
-                        self.msgs.remove(msg)
-                        self.screen.main.current.clear_lines()
-                        for msg in self.msgs: self.screen.main.current.add_line('[%i] %s' % (msg.id, msg.subject))
-                        break
-                utils = IndexUtils()
-                utils.message.delete(id)
-                utils.close()
-
-        elif cmd == 'clear':
-            self.screen.main.current.clear_lines()
-            self.screen.set_status('cleared')
+    def run_command(self, line):
+        if ' ' in line:
+            (cmd, args) = line.split(' ', 1)
         else:
-            pass
+            cmd = line
+            args = None
+
+        if cmd in self.commands:
+            self.commands[cmd]['exec'](self, args)
 
     def run_search(self, search):
         pass
@@ -107,3 +87,78 @@ class CommandHandler(object):
         self.screen.update_title()
 
 
+    def do_quit(self, args):
+        self.screen.destroy()
+
+    def do_list(self, args):
+        limit = 16
+        if args:
+            try:
+                limit = int(args)
+            except:
+                pass
+        self.screen.main.show_tab('list')
+
+        utils = IndexUtils()
+        self.msgs = utils.message.get_messages(limit)
+        utils.close()
+        self.do_refresh(None)
+        self.screen.set_status('%i results' % len(self.msgs))
+        self.screen.update_title()
+
+    def do_delete(self, args):
+        id = int(args)
+        for msg in self.msgs:
+            if msg.id == id:
+                msg.delete = True
+                utils = IndexUtils()
+                utils.message.delete(msg.id)
+                utils.close()
+                #self.msgs.remove(msg)
+                self.do_refresh(None)
+                break
+
+    def do_undelete(self, args):
+        id = int(args)
+        for msg in self.msgs:
+            if msg.id == id:
+                msg.delete = False
+                utils = IndexUtils()
+                utils.message.undelete(msg.id)
+                utils.close()
+                #self.msgs.remove(msg)
+                self.do_refresh(None)
+                break
+
+    def do_refresh(self, args):
+        self.screen.main.current.clear_lines()
+        for msg in self.msgs:
+            if msg.delete and self.show_deleted:
+                style = 'deleted'
+            elif msg.delete:
+                style = 'hidden'
+            else:
+                style = 'default'
+            self.screen.main.current.add_line('[%i] %s' % (msg.id, msg.subject), style)
+
+    def do_clear(self, args):
+        self.screen.main.current.clear_lines()
+        self.screen.set_status('cleared')
+
+    commands = {
+            'c': {'exec': do_clear},
+            'clear': {'exec': do_clear},
+
+            'd': {'exec': do_delete},
+            'delete': {'exec': do_delete},
+
+            'l': {'exec': do_list},
+            'list': {'exec': do_list},
+
+            'q': {'exec': do_quit},
+            'quit': {'exec': do_quit},
+
+            'refresh': {'exec': do_refresh},
+
+            'undelete': {'exec': do_undelete},
+}

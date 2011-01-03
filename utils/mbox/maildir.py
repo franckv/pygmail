@@ -1,7 +1,7 @@
 import os.path
 import re
 
-from email import header, Utils
+from email import header, utils
 from mailbox import Maildir, MaildirMessage
 
 import config
@@ -35,7 +35,7 @@ def get_header(mail, var):
 
 def get_sender(mail):
     sender = get_header(mail, 'From')
-    return Utils.parseaddr(sender)
+    return utils.parseaddr(sender)
 
 def get_subject(mail):
     return get_header(mail, 'Subject')
