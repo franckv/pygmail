@@ -1,3 +1,5 @@
+import curses
+
 import common
 import log
 from pycurses_widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel, ItemList
@@ -7,9 +9,10 @@ class Window(Screen):
     def __init__(self, win):
         super(Window, self).__init__(win)
 
-        self.handler = CommandHandler(self)
 
         self.title = TitleBar(self)
+
+        self.handler = CommandHandler(self)
 
         self.main = TabPanel(self)
         self.main.create_tab(ItemList, 'list')
@@ -20,17 +23,18 @@ class Window(Screen):
         self.status = StatusBar(self)
         self.command = CommandBar(self)
 
-        self.register_event('<KEY_TAB>', self.show_next_tab)
-        self.register_event('<KEY_BTAB>', self.show_prev_tab)
+        self.main.register_event('<KEY_RESIZE>', self.screen.redraw)
+        self.main.register_event('<KEY_TAB>', self.show_next_tab)
+        self.main.register_event('<KEY_BTAB>', self.show_prev_tab)
+
+        self.main.register_event(':', self.handler.run_command)
+        self.main.register_event('d', self.handler.delete_tab)
+        self.main.register_event('D', self.handler.delete_message)
+        self.main.register_event('U', self.handler.undo_delete)
+        self.main.register_event('$', self.handler.toggle_show_deleted)
+        self.main.register_event('/', self.handler.run_search)
 
         self.redraw()
-
-    def send_event(self, event):
-        log.debug('received event %s' % event)
-        if not event in self.events:
-            self.main.send_event(event)
-        else:
-            self.events[event]()
 
     def set_status(self, text):
         self.status.set_text(text)
@@ -38,14 +42,11 @@ class Window(Screen):
     def set_title(self, text):
         self.title.set_text(text)
 
-    def get_char(self):
-        return self.command.get_char()
-
-    def show_next_tab(self):
+    def show_next_tab(self, event=None):
         self.main.show_next_tab()
         self.update_title()
 
-    def show_prev_tab(self):
+    def show_prev_tab(self, event=None):
         self.main.show_prev_tab()
         self.update_title()
 
@@ -61,11 +62,8 @@ class Window(Screen):
 
         self.set_title('%s v%s %s' % (common.PROGNAME, common.PROGVERSION, title))
 
-    def read_command(self):
-        return self.command.read(':', self.validate_command_input)
-
-    def read_search(self):
-        return self.command.read('/', self.validate_command_input)
+    def read(self, c):
+        return self.command.read(c, self.validate_command_input)
 
     def validate_command_input(self, c):
         (y, x) = self.command.get_pos()
@@ -74,5 +72,6 @@ class Window(Screen):
         return True
 
     def run(self):
-        self.handler.handle()
+        curses.curs_set(0)
+        self.main.handle_events()
 

@@ -11,60 +11,37 @@ class CommandHandler(object):
         self.buf = ''
         self.show_deleted = True
 
-    def handle(self):
-        curses.curs_set(0)
-        while True:
-            c = self.screen.get_char()
-            log.debug(c)
+    def delete_tab(self, event):
+        tab_name = self.screen.main.current.name
+        if tab_name.startswith('msg'):
+            log.debug('deleting tab %s' % tab_name)
+            self.screen.main.delete_tab()
+            self.screen.update_title()
 
-            if c is None:
-                continue
+    def toggle_show_deleted(self, event):
+        self.show_deleted = not self.show_deleted
+        self.do_refresh(None)
 
+    def delete_message(self, event):
+        tab_name = self.screen.main.current.name
+        if tab_name == 'list':
+            selected = self.screen.main.current.selected
+            if not selected is None:
+                log.debug('deleting message %i' % selected)
+                id = self.msgs[selected].id
+                self.do_delete(id)
 
-            (y, x) = self.screen.get_pos()
-            self.screen.set_status('(%i, %i) : <%s>' % (y, x, c.strip()))
+    def undo_delete(self, event):
+        tab_name = self.screen.main.current.name
+        if tab_name == 'list':
+            selected = self.screen.main.current.selected
+            if not selected is None:
+                log.debug('undeleting message %i' % selected)
+                id = self.msgs[selected].id
+                self.do_undelete(id)
 
-            events = ['<KEY_LEFT>', '<KEY_RIGHT>', '<KEY_DOWN>', '<KEY_UP>', '<KEY_RESIZE>', '<KEY_ENTER>', '<KEY_BACKSPACE>', '<KEY_TAB>', '<KEY_BTAB>']
-
-            if c in events:
-                self.screen.send_event(c)
-            elif c == ':':
-                cmd = self.screen.read_command()
-                self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
-                self.run_command(cmd)
-            elif c == '/':
-                search = self.screen.read_search()
-                self.screen.set_status('(%i, %i) : <%s>' % (y, x, search.strip()))
-                self.run_search(search)
-            elif c == 'd':
-                tab_name = self.screen.main.current.name
-                if tab_name.startswith('msg'):
-                    log.debug('deleting tab %s' % tab_name)
-                    self.screen.main.delete_tab()
-                    self.screen.update_title()
-            elif c == 'D':
-                tab_name = self.screen.main.current.name
-                if tab_name == 'list':
-                    selected = self.screen.main.current.selected
-                    if not selected is None:
-                        log.debug('deleting message %i' % selected)
-                        id = self.msgs[selected].id
-                        self.do_delete(id)
-            elif c == 'U':
-                tab_name = self.screen.main.current.name
-                if tab_name == 'list':
-                    selected = self.screen.main.current.selected
-                    if not selected is None:
-                        log.debug('undeleting message %i' % selected)
-                        id = self.msgs[selected].id
-                        self.do_undelete(id)
-            elif c == '$':
-                self.show_deleted = not self.show_deleted
-                self.do_refresh(None)
-            else:
-                log.debug('unknown command %s' % c)
-
-    def run_command(self, line):
+    def run_command(self, event):
+        line = self.screen.read(event)
         if ' ' in line:
             (cmd, args) = line.split(' ', 1)
         else:
@@ -74,8 +51,8 @@ class CommandHandler(object):
         if cmd in self.commands:
             self.commands[cmd]['exec'](self, args)
 
-    def run_search(self, search):
-        pass
+    def run_search(self, event):
+        search = self.screen.read(event)
 
     def item_selected(self, idx):
         msg = self.msgs[idx]
