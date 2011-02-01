@@ -1,7 +1,7 @@
 import curses
+import logging
 
 import common
-import log
 from pycurses_widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel, ItemList
 from .commandhandler import CommandHandler
 

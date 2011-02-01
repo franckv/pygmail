@@ -2,13 +2,19 @@ import os, sys
 from optparse import OptionParser
 import logging
 
-import log
 import command
 import ui.ncurses #, ui.gtkui
 
 if __name__ == '__main__':
-    log.init(logging.DEBUG, '/tmp/pygmail.log')
-    log.debug('Start')
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format="[%(levelname)-8s] %(asctime)s %(module)s:%(lineno)d %(message)s",
+        datefmt="%H:%M:%S",
+        filename = '/tmp/pygmail.log',
+        filemode = 'w'
+    )
+
+    logging.debug('Start')
 
     usage = 'Usage: %prog COMMAND [ARGS]'
     parser = OptionParser(usage)
@@ -37,4 +43,4 @@ if __name__ == '__main__':
                 command.list[cmd]['exec'](*args[1:])
 
 
-    log.debug('Stop')
+    logging.debug('Stop')

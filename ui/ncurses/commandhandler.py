@@ -1,5 +1,4 @@
-import log
-import re
+import logging
 import curses
 
 from pycurses_widgets import TextPanel
@@ -14,7 +13,7 @@ class CommandHandler(object):
     def delete_tab(self, event):
         tab_name = self.screen.main.current.name
         if tab_name.startswith('msg'):
-            log.debug('deleting tab %s' % tab_name)
+            logging.debug('deleting tab %s' % tab_name)
             self.screen.main.delete_tab()
             self.screen.update_title()
 
@@ -27,7 +26,7 @@ class CommandHandler(object):
         if tab_name == 'list':
             selected = self.screen.main.current.selected
             if not selected is None:
-                log.debug('deleting message %i' % selected)
+                logging.debug('deleting message %i' % selected)
                 id = self.msgs[selected].id
                 self.do_delete(id)
 
@@ -36,7 +35,7 @@ class CommandHandler(object):
         if tab_name == 'list':
             selected = self.screen.main.current.selected
             if not selected is None:
-                log.debug('undeleting message %i' % selected)
+                logging.debug('undeleting message %i' % selected)
                 id = self.msgs[selected].id
                 self.do_undelete(id)
 
