@@ -1,5 +1,4 @@
-#engine = 'sqlite:///:memory:'
-engine = 'sqlite:////home/franck/Dev/pygmail/db/pygmail.db'
+engine = 'sqlite:///:memory:'
 
 stores = {
     #'IMAP': {'type': 'maildir', 'uri': '/home/franck/Mail/IMAP'}
